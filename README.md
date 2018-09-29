@@ -1,2 +1,2 @@
-# revgeo
-Reverse geocode entities of okxe.gr
+# geocoder
+Forward/Reverse geocoding of entities in okxe.gr
