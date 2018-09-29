@@ -42,7 +42,7 @@ fi
 
 if [ ! -f "$bulkjson" ]; then
   echo 'Splitting to features...'
-  jq -c '.features[] | {index: {"_index": "'$name'", "_type": "'$name'", "_id": .properties.'$upper' } }, {properties, geometry}' $geojson > $bulkjson
+  jq -c '.features[] | {index: {"_id": .properties.'$upper' } }, {properties, geometry}' $geojson > $bulkjson
 fi
 
 echo "Done"

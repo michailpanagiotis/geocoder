@@ -10,7 +10,9 @@ id=$(echo $url | grep -Po 'id=(([^&]*))' | sed 's/id=//g')
 name=$(echo $url | grep -Po 'fname=(([^&]*))' | sed 's/fname=//g' | sed 's/.rar//g')
 upper=$(echo $name | awk '{print toupper($0)}')
 archive=$name.rar
-bulkjson=/downloads/$name.json
+docsjson=/downloads/$name.json
+bulkjson=/downloads/$name.bulk
+bulkcombined=/downloads/combined.bulk
 
 echo "Indexing $name"
 
@@ -37,20 +39,11 @@ curl -sS -X PUT "elasticsearch:9200/$name" -H 'Content-Type: application/json' -
 }
 ' > /dev/null
 
+
+echo 'Preparing...'
+cat $docsjson | sed 's/"_id"/"_index": "'$name'", "_type": "'$name'", "_id"/g' > $bulkjson
+cat $docsjson | sed 's/"_id"/"_index": "combined", "_type": "combined", "_id"/g' > $bulkcombined
+
 echo 'Indexing...'
-
 curl -sS -X POST "elasticsearch:9200/_bulk" -H 'Content-Type: application/json' --data-binary '@'$bulkjson > /dev/null
-
-echo 'Copying to combined...'
-
-curl -sS -X POST "elasticsearch:9200/_reindex" -H 'Content-Type: application/json' -d '
-{
-  "source": {
-    "index" : "'$name'"
-  },
-  "dest": {
-    "index" : "combined",
-    "version_type": "external"
-  }
-}
-'
+curl -sS -X POST "elasticsearch:9200/_bulk" -H 'Content-Type: application/json' --data-binary '@'$bulkcombined > /dev/null

@@ -10,7 +10,7 @@ urls="
 lines="
     http://www1.okxe.gr/geonetwork/srv/en/resources.get?id=48&fname=kalbnd.rar&access=private
 "
-combined=/downloads/combined.json
+combined=/downloads/combined.bulk
 
 echo 'Deleting old combined index...'
 
@@ -34,10 +34,11 @@ curl -sS -X PUT "elasticsearch:9200/combined" -H 'Content-Type: application/json
 }
 ' > /dev/null
 
-# for url in $urls
-# do
-#     sh /src/index.sh $url
-# done
+if [ ! -f $combined ]; then
+    rm $combined
+fi
 
-# echo 'Indexing combined...'
-# curl -sS -X POST "elasticsearch:9200/_bulk" -H 'Content-Type: application/json' --data-binary '@'$combined > /dev/null
+for url in $urls
+do
+    sh /src/index.sh $url
+done
