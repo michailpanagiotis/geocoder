@@ -1,0 +1,62 @@
+version: '3.1'
+services:
+  api:
+    build:
+      context: ./api
+    container_name: api
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./api:/src
+      - /src/node_modules
+    networks:
+      - esnet
+    depends_on:
+      - setup
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:6.4.0
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - esnet
+    ports:
+      - 5601:5601
+    depends_on:
+      - setup
+  setup:
+    build:
+      context: ./setup
+    container_name: setup
+    depends_on:
+      - kibana
+    networks:
+      - esnet
+    volumes:
+      - ./setup:/src
+      - /downloads
+    depends_on:
+      - elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    container_name: elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+      - ./esdata:/src
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
+volumes:
+  esdata1:
+    driver: local
+networks:
+  esnet:

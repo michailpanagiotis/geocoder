@@ -1,0 +1,17 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Api for geocoding",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": "git@github.com:michailpanagiotis/geocoder.git",
+  "author": "Panos Michail <michailpanagiotis@gmail.com>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "elasticsearch": "^15.1.1",
+    "koa": "^2.5.3",
+    "nodemon": "^1.18.4"
+  }
+}

@@ -61,3 +61,6 @@ typings/
 .next
 
 *.un~
+*.rar
+*.swp
+.DS_Store
