@@ -9,13 +9,13 @@ url=$1
 id=$(echo $url | grep -Po 'id=(([^&]*))' | sed 's/id=//g')
 name=$(echo $url | grep -Po 'fname=(([^&]*))' | sed 's/fname=//g' | sed 's/.rar//g')
 upper=$(echo $name | awk '{print toupper($0)}')
-archive=/downloads/$name.rar
+archive=/data/$name.rar
 filename=$name.rar
-geojson=/downloads/$name.geojson
-bulkjson=/downloads/$name.json
-shapedir=/downloads/$name/
+geojson=/data/$name.geojson
+bulkjson=/data/$name.json
+shapedir=/data/$name/
 shapefile=$shapedir$name.shp
-combined=/downloads/combined.json
+combined=/data/combined.json
 
 echo "Downloading $name to $archive"
 
@@ -28,7 +28,7 @@ fi
 
 if [ ! -d $shapedir ]; then
   echo "Unpacking..."
-  unrar e -y $archive $shapedir
+  unrar e -y $archive $shapedir > /dev/null
 fi
 
 if [ ! -f "$geojson" ]; then
