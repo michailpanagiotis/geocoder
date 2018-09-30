@@ -23,20 +23,16 @@ services:
     ports:
       - 5601:5601
     depends_on:
-      - setup
+      - elasticsearch
   setup:
     build:
       context: ./setup
     container_name: setup
-    depends_on:
-      - kibana
     networks:
       - esnet
     volumes:
       - ./setup:/src
       - /downloads
-    depends_on:
-      - elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
     container_name: elasticsearch

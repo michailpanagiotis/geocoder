@@ -5,12 +5,8 @@ if [ $# -eq 0 ]
 fi
 
 
-url=$1
-id=$(echo $url | grep -Po 'id=(([^&]*))' | sed 's/id=//g')
-name=$(echo $url | grep -Po 'fname=(([^&]*))' | sed 's/fname=//g' | sed 's/.rar//g')
-upper=$(echo $name | awk '{print toupper($0)}')
-archive=$name.rar
-docsjson=/data/$name.json
+docsjson=$1
+name=$(echo $1 | sed 's/\/data\///g' | sed 's/\.json//g')
 bulkjson=/data/$name.bulk
 bulkcombined=/data/combined.bulk
 
@@ -40,15 +36,5 @@ curl -sS -X PUT "elasticsearch:9200/$name" -H 'Content-Type: application/json' -
 ' > /dev/null
 
 
-echo 'Preparing...'
-if [ ! -f $bulkjson ]; then
-    cat $docsjson | sed 's/"_id"/"_index": "'$name'", "_type": "'$name'", "_id"/g' > $bulkjson
-fi
-
-if [ ! -f $bulkcombined ]; then
-    cat $docsjson | sed 's/"_id"/"_index": "combined", "_type": "combined", "_id"/g' > $bulkcombined
-fi
-
 echo 'Indexing...'
-curl -sS -X POST "elasticsearch:9200/_bulk" -H 'Content-Type: application/json' --data-binary '@'$bulkjson > /dev/null
-curl -sS -X POST "elasticsearch:9200/_bulk" -H 'Content-Type: application/json' --data-binary '@'$bulkcombined > /dev/null
+curl -sS -X POST "elasticsearch:9200/_bulk" -H 'Content-Type: application/json' --data-binary '@'$bulkjson

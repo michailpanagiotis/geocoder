@@ -13,5 +13,5 @@ lines="
 
 for url in $urls
 do
-    sh /src/download.sh $url
+    sh /data/download.sh $url
 done
