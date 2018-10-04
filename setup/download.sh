@@ -12,7 +12,8 @@ upper=$(echo $name | awk '{print toupper($0)}')
 archive=/data/$name.rar
 filename=$name.rar
 geojson=/data/$name.geojson
-bulkjson=/data/$name-docs.json
+docjson=/data/$name-docs.json
+bulkjson=/data/$name.bulk
 shapedir=/data/$name/
 shapefile=$shapedir$name.shp
 combined=/data/combined.json
@@ -32,17 +33,20 @@ if [ ! -d $shapedir ]; then
 fi
 
 if [ ! -f "$geojson" ]; then
-  SHAPE_ENCODING="ISO-8859-7"
-
   # ogrinfo -al -so $name/$name.shp
   echo "Converting to GeoJSON '$geojson'..."
 
-  ogr2ogr -f GeoJSON -t_srs crs:84 $geojson -sql "select ST_UNION(GEOMETRY), * from $name group by $upper" -dialect SQLITE $shapefile
+  SHAPE_ENCODING="ISO-8859-7" ogr2ogr -f GeoJSON -t_srs crs:84 $geojson -sql "select ST_UNION(GEOMETRY), * from $name group by $upper" -dialect SQLITE $shapefile
+fi
+
+if [ ! -f "$docjson" ]; then
+  echo "Splitting to features in '$docjson'..."
+  jq -c '.features[] | {index: {"_id": .properties.'$upper' } }, {properties, geometry}' $geojson > $docjson
 fi
 
 if [ ! -f "$bulkjson" ]; then
-  echo 'Splitting to features...'
-  jq -c '.features[] | {index: {"_id": .properties.'$upper' } }, {properties, geometry}' $geojson > $bulkjson
+    echo "Preparing file $file..."
+    cat $docjson | sed 's/"_id"/"_index": "combined", "_type": "combined", "_id"/g' > $bulkjson
 fi
 
 echo "Done"
