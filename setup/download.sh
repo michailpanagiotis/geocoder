@@ -41,7 +41,7 @@ fi
 
 if [ ! -f "$docjson" ]; then
   echo "Splitting to features in '$docjson'..."
-  jq -c '.features[] | {index: {"_id": .properties.'$upper' } }, {properties, geometry}' $geojson > $docjson
+  jq -c '.features[] | {index: {"_id": (.properties.'$upper' | @text | "'$name'_" + .) } }, {"ktype": "'$name'", properties, geometry}' $geojson > $docjson
 fi
 
 if [ ! -f "$bulkjson" ]; then
