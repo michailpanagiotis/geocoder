@@ -24,15 +24,15 @@ services:
       - esnet
     depends_on:
       - setup
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:6.4.0
-    volumes:
-      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
-    networks:
-      - esnet
-    depends_on:
-      - elasticsearch
+# kibana:
+#   container_name: kibana
+#   image: docker.elastic.co/kibana/kibana:6.4.0
+#   volumes:
+#     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+#   networks:
+#     - esnet
+#   depends_on:
+#     - elasticsearch
   setup:
     build:
       context: ./setup

@@ -14,5 +14,5 @@ RUN sh /data/prepare-all.sh
 WORKDIR /src
 # RUN sh /src/download-all.sh
 # ENTRYPOINT ["sh", "/src/setup-all.sh"]
-# CMD ["sh", "/src/setup-all.sh"]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["sh", "/src/index-all.sh"]
+# CMD ["tail", "-f", "/dev/null"]
