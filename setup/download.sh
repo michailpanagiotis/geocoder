@@ -17,6 +17,7 @@ bulkjson=/data/$name.bulk
 shapedir=/data/$name/
 shapefile=$shapedir$name.shp
 combined=/data/combined.json
+link="http://www1.okxe.gr/geonetwork/srv/en/resources.get?id=$id&fname=$filename&access=private"
 
 echo "Downloading $name to $archive"
 
